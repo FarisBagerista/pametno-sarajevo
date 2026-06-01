@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pametno Sarajevo - Digitalizacija Sistema Upravljanja Otpadom</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --secondary: #10b981;
+            --secondary-light: #ecfdf5;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #0f172a 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            border-bottom: 5px solid var(--secondary);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.05em;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .faculty-tag {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+
+        /* Wikipedia-like Sticky Sidebar Navigation */
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            background-color: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .sidebar h3 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 0.75rem;
+        }
+
+        .sidebar a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            transition: color 0.2s;
+        }
+
+        .sidebar a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        /* Main Content Area */
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .poster-section {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .poster-badge {
+            display: inline-block;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem 0;
+            color: #0f172a;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            text-align: justify;
+        }
+
+        /* Custom styled lists for problems and components */
+        .problem-list, .component-grid {
+            margin: 1.5rem 0;
+            list-style: none;
+        }
+
+        .problem-item {
+            background-color: #fff5f5;
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .component-card {
+            background-color: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .component-card strong {
+            color: var(--primary);
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Grid layouts for data visualization replacement */
+        .data-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+            .data-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Clean academic tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .metric-box {
+            background: linear-gradient(135deg, var(--secondary-light) 0%, #ffffff 100%);
+            border: 1px solid var(--secondary);
+            padding: 1.25rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .comparison-box {
+            background-color: #fafafa;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .phase-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .phase-step {
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .phase-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            background-color: #0f172a;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 2.5rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        footer p {
+            text-align: center;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="poster-badge">Projektna Dokumentacija</div>
+        <h1>POSTER: PAMETNO SARAJEVO</h1>
+        <p>Bilješke za prezentovanje • 03.06.2026. srijeda</p>
+        <div class="faculty-tag">Građevinski fakultet u Sarajevu</div>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar">
+            <h3>Sadržaj</h3>
+            <ul>
+                <li><a href="#trenutno-stanje">1. Trenutno stanje</a></li>
+                <li><a href="#kljucni-problemi">2. Ključni problemi</a></li>
+                <li><a href="#graficki-prikazi">3. Grafički prikazi</a></li>
+                <li><a href="#rezultati-ankete">4. Rezultati ankete</a></li>
+                <li><a href="#digitalizacija">5. Rješenje kroz digitalizaciju</a></li>
+                <li><a href="#ocekivani-rezultati">6. Očekivani rezultati</a></li>
+                <li><a href="#prihvatanje-rjesenja">7. Prihvatanje rješenja</a></li>
+                <li><a href="#implementacija">8. Tok implementacije</a></li>
+                <li><a href="#buducnost">9. Očekivano stanje i budućnost</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            
+            <section id="trenutno-stanje" class="poster-section">
+                <div class="poster-badge">Poster 1</div>
+                <h2>TRENUTNO STANJE: Kako Sarajevo upravlja otpadom danas?</h2>
+                
+                <h3>1. Uvod u temu</h3>
+                <p>Dobar dan svima. Tema našeg rada je digitalizacija sistema upravljanja čvrstim otpadom u Sarajevu, projekat koji smo nazvali 'Pametno Sarajevo'. Gradovi širom svijeta suočavaju se sa sve većim količinama otpada, rastom broja stanovnika i povećanim pritiskom na komunalne službe. Tradicionalni sistemi odvoza često nisu dovoljno efikasni jer se kontejneri prazne prema unaprijed određenim rutama, bez obzira da li su kapaciteti popunjeni.</p>
+                
+                <p>Prema podacima Svjetske banke, količina komunalnog otpada u svijetu bi do 2050. mogla porasti za čak 70%, što pokazuje koliko je važno razvijati održive sisteme. Zbog toga se danas sve više razvijaju koncepti „pametnih gradova", gradova koji koriste digitalne tehnologije, senzore i analizu podataka kako bi unaprijedili kvalitet života građana.</p>
+                
+                <p>Počinjemo sa trenutnim stanjem. Sarajevo svakodnevno proizvodi oko 500 tona otpada. Gotovo sav taj otpad završava na deponiji u Smiljevićima. Sistem se zasniva na fiksnim rutama odvoza, kamioni idu prema rasporedu, bez obzira na to koliko su kontejneri stvarno puni. U gradu postoji oko 10.000 kontejnera i kanti i nijedan od njih nema senzor koji bi upozorio na popunjenost kapaciteta. Rezultat toga vidimo svaki dan na ulicama: preliveni kontejneri, otpad van kontejnera, neugodni mirisi i vizualna zagađenost.</p>
+
+                <h3 id="kljucni-problemi">2. Ključni problemi</h3>
+                <p>Identificirali smo pet ključnih problema trenutnog sistema:</p>
+                <ul class="problem-list">
+                    <li class="problem-item"><strong>Prvo:</strong> Neefikasno prikupljanje i transport; kamioni voze prazne ili polupune rute.</li>
+                    <li class="problem-item"><strong>Drugo:</strong> Prepunjeni kontejneri u urbanim zonama, što vidite i sami svaki dan.</li>
+                    <li class="problem-item"><strong>Treće:</strong> Nedostatak podataka u realnom vremenu; niko ne zna gdje je i koliko otpada u ovom trenutku.</li>
+                    <li class="problem-item"><strong>Četvrto:</strong> Niska stopa reciklaže.</li>
+                    <li class="problem-item"><strong>Peto:</strong> Visoki operativni troškovi i emisije CO<sub>2</sub> zbog nepotrebnih vožnji.</li>
+                </ul>
+
+                <h3 id="graficki-prikazi">3. Grafički prikazi i Analiza Infrastrukture</h3>
+                <p>Dnevni tok otpada u Sarajevu jasno ilustruje stanje: KJKP Rad odvozi oko 497 tona dnevno samo na deponiju Smiljevići. Sa druge strane, reciklaža obuhvata tek 2,7 tona, što predstavlja manje od 1% ukupnog otpada, podatak koji govori sam za sebe.</p>
+                
+                <p>Učestalost odvoza otpada pokazuje da se u urbanim zonama grada otpad odvozi 6-7 puta sedmično, dok u manjim općinama i prigradskim naseljima taj broj pada na svega 1,5 puta sedmično. Ovo dokazuje da sistem nije ravnomjerno raspoređen po gradu. Zastupljenost kanti i kontejnera potvrđuje da različite zone ne koriste isti tip posuda za otpad, od malih kanti od 100 i 240 litara do velikih kontejnera, što znači da sistem mora biti prilagođen svakoj zoni posebno.</p>
+                
+                <p>Naša interaktivna mapa detaljno prikazuje raspoređenost svih vrsta otpada po cijelom Kantonu Sarajevo, uključujući lokacije mješanog komunalnog otpada, kontejnere za rasuti teret, sortirani otpad (staklo, papir, plastiku), te deponije, spalionice i mjesta za kompostiranje. Posebno je uočljivo da su kontejneri velikog kapaciteta koji nisu dostupni svim vozilima, ali i oni s otežanim pristupom, raspoređeni po cijelom kantonu, što direktno utiče na efikasnost odvoza. Ovakav prikaz jasno pokazuje gdje sistem funkcioniše, a gdje postoje praznine u infrastrukturi koje je potrebno popuniti.</p>
+
+                <h3 id="rezultati-ankete">4. Rezultati ankete (Uzorak: 35 ispitanika)</h3>
+                <p>Rezultati provedene ankete potvrđuju sve što smo vidjeli u tehničkim podacima. Skoro dvije trećine anketiranih građana Sarajeva su nezadovoljni trenutnim stanjem. Razlog niske stope reciklaže nije nedostatak volje, već nedostatak sistema koji to olakšava.</p>
+                
+                <div class="data-layout">
+                    <div>
+                        <strong>Koliko ste zadovoljni trenutnim sistemom odvoza otpada?</strong>
+                        <table>
+                            <thead>
+                                <tr><th>Odgovor</th><th>Procenat</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Nezadovoljan/na</td><td><strong>62,9%</strong></td></tr>
+                                <tr><td>Neutralno</td><td>34,3%</td></tr>
+                                <tr><td>Zadovoljan/na</td><td>2,8%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <strong>Da li smatrate da su kontejneri često prepunjeni?</strong>
+                        <table>
+                            <thead>
+                                <tr><th>Odgovor</th><th>Procenat</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Da - kontejneri su prepunjeni</td><td><strong>91,4%</strong></td></tr>
+                                <tr><td>Ponekad</td><td>8,6%</td></tr>
+                                <tr><td>Ne</td><td>0%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <strong>Da li odvajate otpad za reciklažu?</strong>
+                <table>
+                    <thead>
+                        <tr><th>Odgovor</th><th>Procenat</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Ne</td><td><strong>57,1%</strong></td></tr>
+                        <tr><td>Ponekad</td><td>28,6%</td></tr>
+                        <tr><td>Da redovno</td><td>14,3%</td></tr>
+                    </tbody>
+                </table>
+                <p><em>*Više od polovice građana uopće ne odvaja otpad za reciklažu, tačnije 57,1% ne reciklira nikada.</em></p>
+            </section>
+
+            <section id="digitalizacija" class="poster-section">
+                <div class="poster-badge">Poster 2</div>
+                <h2>PAMETNO SARAJEVO: Rješenje kroz digitalizaciju</h2>
+                
+                <h3>5. Uvod u rješenje i 6 ključnih komponenti</h3>
+                <p>Nakon što smo vidjeli problem, idemo na rješenje. Prijedlog se zove 'Pametno Sarajevo' i zasnovan je na šest digitalnih komponenti koje zajedno čine integrisan sistem upravljanja otpadom. Digitalizacija ne znači samo „uvođenje aplikacije", nego stvaranje sistema koji povezuje građane, komunalna preduzeća, vozila, kontejnere, podatke i gradske službe.</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <strong>1. Pametni kontejneri</strong>
+                        Svaki kontejner dobija ultrazvučni senzor koji mjeri popunjenost, senzor temperature koji može detektovati požar i senzor za nepravilno odlaganje otpada. Podatke šalju u realnom vremenu. Komunalno preduzeće ne mora čekati prijavu građana ili obilaziti kontejnere naslijepo. Ovakvi sistemi već se koriste u gradovima poput Barcelone, Amsterdama i Kopenhagena, a u Sarajevu bi ovo bilo posebno korisno u gusto naseljenim urbanim zonama.
+                    </div>
+                    
+                    <div class="component-card">
+                        <strong>2. Optimizacija ruta odvoza</strong>
+                        Algoritmi na osnovu podataka sa senzora određuju kada i kuda idu kamioni. Više nema praznih vožnji, kamion ide samo tamo gdje kontejner treba isprazniti. Ovo direktno smanjuje troškove goriva i emisije CO<sub>2</sub>. Prema istraživanjima, optimizacija ruta može smanjiti operativne troškove za 20 do 30%, što je ključno za Sarajevo zbog saobraćajnih gužvi i konfiguracije terena.
+                    </div>
+                    
+                    <div class="component-card">
+                        <strong>3. Centralna digitalna platforma</strong>
+                        Neka vrsta kontrolnog centra koji prikuplja sve podatke, prikazuje stanje sistema na dashboardu i omogućava upravljanje u realnom vremenu. Komunalne službe imaju kompletan uvid iz jednog mjesta o popunjenosti, nelegalnom odlaganju i efikasnosti ruta. Odluke se više ne donose na osnovu pretpostavki, nego na osnovu konkretnih podataka.
+                    </div>
+                    
+                    <div class="component-card">
+                        <strong>4. Mobilne aplikacije za građane</strong>
+                        Kroz aplikaciju, svaki stanovnik može vidjeti gdje odložiti koji otpad, provjeriti raspored odvoza i prijaviti problem poput prepunjenog kontejnera, divlju deponiju ili oštećenu kantu. Ovo povećava uključenost građana, jer pametan grad čine i građani koji aktivno učestvuju u održavanju grada.
+                    </div>
+                    
+                    <div class="component-card">
+                        <strong>5. Pametno razvrstavanje otpada</strong>
+                        Sistem pomoću RFID (Radio Frequency Identification) kartica ili QR kodova omogućava da svaki građanin koji odvoji otpad bude prepoznat i nagrađen. Prilikom odlaganja, građani se identifikuju skeniranjem, a sistem evidentira količinu i dodjeljuje bodove ili nagrade, čime se direktno podstiče reciklaža.
+                    </div>
+                    
+                    <div class="component-card">
+                        <strong>6. Analitika i planiranje</strong>
+                        Sistem prikuplja podatke, analizira trendove i dugoročno optimizira cijelu infrastrukturu (gdje postaviti nove kontejnere ili uvesti dodatne reciklažne punktove). Ovo prediktivno upravljanje omogućava da se sistem vremenom prilagođava stvarnim i sezonskim potrebama grada.
+                    </div>
+                </div>
+
+                <h3 id="ocekivani-rezultati">6. Očekivani rezultati na osnovu evropskih modela</h3>
+                <div class="data-layout">
+                    <div class="metric-box">
+                        <div class="metric-value">+30% do 40%</div>
+                        <div class="metric-label">Povećanje stope reciklaže</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">-20% do 30%</div>
+                        <div class="metric-label">Smanjenje operativnih troškova</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">-25%</div>
+                        <div class="metric-label">Smanjenje emisija CO<sub>2</sub></div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">Visoko</div>
+                        <div class="metric-label">Zadovoljstvo građana</div>
+                    </div>
+                </div>
+
+                <h3 id="prihvatanje-rjesenja">7. Anketa o prihvatanju rješenja od strane građana</h3>
+                <p>Pitali smo građane da li bi koristili predložena rješenja. Podaci su izuzetno ohrabrujući i pokazuju da volja građana postoji, dok infrastruktura i organizacija nedostaju.</p>
+                
+                <div class="data-layout">
+                    <div>
+                        <strong>Podrška pametnim kontejnerima sa senzorima</strong>
+                        <table>
+                            <tr><td>Da - podržavam</td><td><strong>97,1%</strong></td></tr>
+                            <tr><td>Nisam siguran/na</td><td>2,9%</td></tr>
+                            <tr><td>Ne</td><td>0%</td></tr>
+                        </table>
+                    </div>
+                    <div>
+                        <strong>Podrška sistemu nagrada za reciklažu</strong>
+                        <table>
+                            <tr><td>Da - podržavam nagrade</td><td><strong>91,4%</strong></td></tr>
+                            <tr><td>Nisam siguran/na</td><td>~5,7%</td></tr>
+                            <tr><td>Ne</td><td>~2,9%</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="data-layout">
+                    <div>
+                        <strong>Korištenje mobilne aplikacije za prijavu problema</strong>
+                        <table>
+                            <tr><td>Da</td><td><strong>74,3%</strong></td></tr>
+                            <tr><td>Možda</td><td>20,0%</td></tr>
+                            <tr><td>Ne</td><td>5,7%</td></tr>
+                        </table>
+                    </div>
+                    <div>
+                        <strong>Korištenje aplikacije s rasporedom odvoza</strong>
+                        <table>
+                            <tr><td>Da</td><td><strong>65,7%</strong></td></tr>
+                            <tr><td>Možda</td><td>20,0%</td></tr>
+                            <tr><td>Ne</td><td>14,3%</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <h3 id="implementacija">8. Tok implementacije sistema</h3>
+                <p>Implementacija je planirana u tri sukcesivne faze:</p>
+                <div class="phase-timeline">
+                    <div class="phase-step">
+                        <div class="phase-title">Faza 1: Početna digitalizacija</div>
+                        <p>Uključuje postavljanje IoT senzora primarno u manjim urbanim zonama i prigradskim naseljima, gdje ne postoji ustaljeni raspored odvoza i gdje su potrebe najveće. Centralni dijelovi su već pokriveni redovnim rutama, dok su manja naselja češće zapostavljena. Praćenje u realnom vremenu i pilot-optimizacija ruta omogućit će brži odgovor komunalnih službi.</p>
+                    </div>
+                    <div class="phase-step">
+                        <div class="phase-title">Faza 2: Pametna optimizacija sistema</div>
+                        <p>Proširuje senzore na veći broj naselja, uvodi mobilnu aplikaciju za građane za prijavu problema, automatizira planiranje ruta i pokreće sistem za pametno razvrstavanje. Očekujemo prve uštede i porast stope reciklaže.</p>
+                    </div>
+                    <div class="phase-step">
+                        <div class="phase-title">Faza 3: Potpuno integrisani pametni sistem</div>
+                        <p>Potpuna digitalna kontrola upravljanja otpadom, prediktivna analiza, integracija građana kroz aplikacije i RFID sistem, te automatsko izvještavanje i monitoring emisija CO<sub>2</sub>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="buducnost" class="poster-section">
+                <div class="poster-badge">Poster 3</div>
+                <h2>OČEKIVANO STANJE: Implementacija i budućnost sistema</h2>
+                
+                <h3>9. Uvod - Vizija budućnosti</h3>
+                <p>Na trećem posteru prikazujemo šta nas čeka nakon što se sistem implementira. Vizija je jasna: primjena digitalnih tehnologija, podataka i pametnih rješenja za efikasno, transparentno i održivo upravljanje čvrstim otpadom u gradu. Glavna poruka je prelazak iz sistema koji je reaktivan u sistem koji je pametan, preventivan i zasnovan na podacima.</p>
+
+                <h3>10. Produkcija otpada na sedmičnom nivou (Prije / Poslije)</h3>
+                <div class="data-layout">
+                    <div class="comparison-box">
+                        <strong>Trenutni sistem (Prije)</strong>
+                        <p>Otpad ostao u kontejnerima: <strong>75 tona</strong></p>
+                        <p>Reciklaža: <strong>25 tona</strong></p>
+                        <p>Završi na deponiji: <strong>400 tona</strong></p>
+                    </div>
+                    <div class="comparison-box" style="border-color: var(--secondary); background-color: var(--secondary-light);">
+                        <strong style="color: var(--secondary);">Pametan sistem (Poslije)</strong>
+                        <p>Otpad ostao u kontejnerima: <strong>50 tona</strong> (Smanjenje)</p>
+                        <p>Reciklaža: <strong>50 tona</strong> (Duplo više)</p>
+                        <p>Završi na deponiji: <strong>300 tona</strong> (Smanjenje za 25%)</p>
+                    </div>
+                </div>
+
+                <h3>11. Uporedni prikaz: Trenutno vs. Očekivano</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Karakteristika sistema</th>
+                            <th>Trenutno stanje</th>
+                            <th>Očekivano stanje (Pametni sistem)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Rute odvoza</strong></td>
+                            <td>Fiksne rute</td>
+                            <td>Pametne rute (Optimizovane)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dostupnost podataka</strong></td>
+                            <td>Sistem bez podataka</td>
+                            <td>Sistem s real-time podacima</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stanje kontejnera</strong></td>
+                            <td>Prepunjeni kontejneri</td>
+                            <td>Optimizovano pražnjenje</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stopa reciklaže</strong></td>
+                            <td>Niska reciklaža</td>
+                            <td>Povećana reciklaža</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Filozofija djelovanja</strong></td>
+                            <td>Reaktivan, skup i neefikasan</td>
+                            <td>Proaktivan, efikasan i održiv</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>12. Tehnologija pametnih kontejnera i oprema</h3>
+                <p>Tehnološku osnovu rješenja čine napredne komponente integrisane na terenu. Pametni kontejner posjeduje ultrazvučni senzor za mjerenje popunjenosti, senzor za gasove, solarni panel za napajanje, upravljačku kontrolnu ploču i komunikacijski modul koji podatke šalje u centralni sistem. Postoje razvijeni modeli kako za kante u domaćinstvima, tako i za velike kontejnere.</p>
+                
+                <p>Posebno zanimljiv segment je digitalno mjesto za povrat ambalaže – mašina koja automatski prepoznaje ambalažu, daje nagradu korisniku i evidentira reciklažu, slično sistemima u Beču, Ljubljani i Barceloni. Sve je uvezano sa pametnim kamionima za odvoz koji primaju podatke u realnom vremenu i prilagođavaju svoje rute na terenu.</p>
+
+                <h3>13. Ekološki efekti</h3>
+                <p>Jedan od najvažnijih ciljeva je smanjenje negativnog uticaja na okoliš. Smanjenjem broja nepotrebnih vožnji smanjuje se potrošnja goriva i direktno emisija CO<sub>2</sub>. Povećanjem reciklaže manja količina otpada završava na deponiji, dok pravovremeno pražnjenje minimizira rizik od neugodnih mirisa, širenja otpada i zagađenja javnih površina. Digitalizacija stoga predstavlja kompletno tehnološko, ekološko i društveno rješenje.</p>
+
+                <h3>14. Zaključak</h3>
+                <p>Podaci iz ankete jasno pokazuju da su problemi s kojima se Sarajevo suočava sistemske prirode. Rješenje koje predlažemo nadilazi samo tehnički aspekt; ono zahtijeva edukaciju građana, jačanje ekološke svijesti te strožiji sistem kazni za nepropisno odlaganje. 'Pametno Sarajevo' nije samo IT projekat, to je promjena načina na koji grad brine o sebi i svom okolišu, s ciljem transformacije u čistije, zdravije i efikasnije urbano okruženje zasnovano na podacima.</p>
+                
+                <p><em>Hvala na pažnji. Otvoreni smo za vaša pitanja i komentare.</em></p>
+            </section>
+
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2026 Građevinski fakultet u Sarajevu • Pametno Sarajevo</p>
+    </footer>
+
+</body>
+</html>
